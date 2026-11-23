@@ -1,14 +1,64 @@
-const { workflows, classify, buildResult } = window.AtlasAutomation;
-const state = { runs: [], selected: null, values: {} };
-const $ = s => document.querySelector(s); const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-document.querySelectorAll('.nav').forEach(b => b.onclick = () => { document.querySelectorAll('.nav').forEach(x => x.classList.remove('active')); b.classList.add('active'); document.querySelectorAll('.view').forEach(v => v.classList.add('hidden')); $('#' + b.dataset.view).classList.remove('hidden'); });
-document.querySelectorAll('[data-example]').forEach(b => b.onclick = () => { $('#request').value = b.dataset.example; $('#analyze').click(); });
-$('#analyze').onclick = () => { const id = classify($('#request').value); state.selected = id; state.values = Object.fromEntries(workflows[id].fields.map(f => [f.id, f.value || ''])); renderClassification(id); renderPlan(id); };
-function renderClassification(id) { const w = workflows[id]; $('#classification').innerHTML = `<div class="classification"><div class="workflow-icon">${w.icon}</div><div><span class="match">SUPPORTED WORKFLOW / ${w.id.toUpperCase()}</span><h3>${w.name}</h3><p>${w.description}</p></div></div><div class="confidence"><span>Confidence</span><b>High</b><div class="bar"><i></i></div><span>Rule match</span></div><div class="fields">${w.fields.map(f => `<label>${f.label}${f.type === 'select' ? `<select data-field="${f.id}">${f.options.map(o => `<option ${o === f.value ? 'selected' : ''}>${o}</option>`).join('')}</select>` : `<input data-field="${f.id}" type="${f.type}" value="${esc(f.value)}">`}</label>`).join('')}</div>`; document.querySelectorAll('[data-field]').forEach(e => e.oninput = () => state.values[e.dataset.field] = e.value); }
-function renderPlan(id) { const w = workflows[id]; $('#plan').innerHTML = `<div class="plan-head"><b>${w.name}</b><span>ONAY BEKLİYOR</span></div><ol>${w.steps.map(s => `<li>${s}</li>`).join('')}</ol><div class="guardrail">◉ <span><b>İnsan onayı gerekli</b><br>FlowPilot e-posta göndermez, satın alma yapmaz ve dış sistemleri değiştirmez.</span></div><button class="primary full" id="run">Yerel olarak onayla <span>→</span></button>`; $('#run').onclick = run; }
-function run() { const result = buildResult(state.selected, state.values); const run = { id: String(Date.now()).slice(-6), workflow: workflows[state.selected].name, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), result }; state.runs.unshift(run); renderResult(result); renderRuns(); }
-function renderResult(r) { $('#result-panel').classList.remove('hidden'); $('#result-panel').innerHTML = `<div class="card-label">04 / RUN RESULT <span class="success">● COMPLETED LOCALLY</span></div><div class="result-head"><div><h2>${r.title}</h2><p>${r.summary}</p></div><div class="result-check">✓</div></div><div class="result-items">${r.items.map(x => `<div><span>${esc(x.label || x.name)}</span><b>${esc(x.value || `${x.onHand} units`)}</b></div>`).join('')}</div><div class="boundary">▣ <b>Boundary:</b> ${r.boundary}</div>`; $('#result-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
-function renderRuns() { $('#run-count').textContent = `${state.runs.length} DEVİR`; $('#runs-list').innerHTML = state.runs.length ? state.runs.map(x => `<div class="run-row"><div class="run-status">✓</div><div><b>${x.workflow}</b><span>${x.result.summary}</span></div><time>${x.time}</time><span class="local-tag">YEREL</span></div>`).join('') : '<div class="empty large"><div class="empty-icon">◷</div><b>Henüz devir yok</b><span>Onaylanan iş akışları sonucu ve sınırlarıyla burada görünür.</span></div>'; }
-$('#save-provider').onclick = e => { e.target.textContent = 'Saved for this session'; e.target.classList.add('saved'); };
-if (location.hash === '#provider' || location.hash === '#runs') { const target = document.querySelector(`[data-view="${location.hash.slice(1)}"]`); if (target) target.click(); }
-if (!location.hash) $('#analyze').click();
+(function () {
+  function start() {
+    const atlas = window.AtlasAutomation;
+    if (!atlas) return;
+    const { workflows, classify, buildResult } = atlas;
+    const state = { runs: [], selected: null, values: {} };
+    const $ = (selector) => document.querySelector(selector);
+    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    document.querySelectorAll('.nav').forEach((button) => button.addEventListener('click', () => {
+      document.querySelectorAll('.nav').forEach((item) => item.classList.remove('active'));
+      button.classList.add('active');
+      document.querySelectorAll('.view').forEach((view) => view.classList.add('hidden'));
+      $('#' + button.dataset.view).classList.remove('hidden');
+    }));
+
+    function renderClassification(id) {
+      const workflow = workflows[id];
+      $('#classification').innerHTML = `<div class="classification"><div class="workflow-icon">${workflow.icon}</div><div><span class="match">DESTEKLENEN PLAYBOOK / ${workflow.id.toUpperCase()}</span><h3>${workflow.name}</h3><p>${workflow.description}</p></div></div><div class="confidence"><span>Güven</span><b>Yüksek</b><div class="bar"><i></i></div><span>Kural eşleşmesi</span></div><div class="fields">${workflow.fields.map((field) => `<label>${field.label}${field.type === 'select' ? `<select data-field="${field.id}">${field.options.map((option) => `<option ${option === field.value ? 'selected' : ''}>${option}</option>`).join('')}</select>` : `<input data-field="${field.id}" type="${field.type}" value="${esc(field.value)}">`}</label>`).join('')}</div>`;
+      document.querySelectorAll('[data-field]').forEach((field) => field.addEventListener('input', () => { state.values[field.dataset.field] = field.value; }));
+    }
+
+    function renderPlan(id) {
+      const workflow = workflows[id];
+      $('#plan').innerHTML = `<div class="plan-head"><b>${workflow.name}</b><span>ONAY BEKLİYOR</span></div><ol>${workflow.steps.map((step) => `<li>${step}</li>`).join('')}</ol><div class="guardrail">◉ <span><b>İnsan onayı gerekli</b><br>FlowPilot e-posta göndermez, satın alma yapmaz ve dış sistemleri değiştirmez.</span></div><button class="primary full" id="run">Yerel olarak onayla <span>→</span></button>`;
+      $('#run').addEventListener('click', run);
+    }
+
+    function analyze() {
+      const id = classify($('#request').value);
+      state.selected = id;
+      state.values = Object.fromEntries(workflows[id].fields.map((field) => [field.id, field.value || '']));
+      renderClassification(id);
+      renderPlan(id);
+    }
+
+    function renderResult(result) {
+      $('#result-panel').classList.remove('hidden');
+      $('#result-panel').innerHTML = `<div class="card-label">04 / İŞ AKIŞI SONUCU <span class="success">● YERELDE TAMAMLANDI</span></div><div class="result-head"><div><h2>${result.title}</h2><p>${result.summary}</p></div><div class="result-check">✓</div></div><div class="result-items">${result.items.map((item) => `<div><span>${esc(item.label || item.name)}</span><b>${esc(item.value || `${item.onHand} adet`)}</b></div>`).join('')}</div><div class="boundary">▣ <b>Sınır:</b> ${result.boundary}</div>`;
+      $('#result-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function renderRuns() {
+      $('#run-count').textContent = `${state.runs.length} DEVİR`;
+      $('#runs-list').innerHTML = state.runs.length ? state.runs.map((run) => `<div class="run-row"><div class="run-status">✓</div><div><b>${run.workflow}</b><span>${run.result.summary}</span></div><time>${run.time}</time><span class="local-tag">YEREL</span></div>`).join('') : '<div class="empty large"><div class="empty-icon">◷</div><b>Henüz devir yok</b><span>Onaylanan iş akışları sonucu ve sınırlarıyla burada görünür.</span></div>';
+    }
+
+    function run() {
+      const result = buildResult(state.selected, state.values);
+      state.runs.unshift({ workflow: workflows[state.selected].name, time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }), result });
+      renderResult(result);
+      renderRuns();
+    }
+
+    $('#analyze').addEventListener('click', analyze);
+    document.querySelectorAll('[data-example]').forEach((button) => button.addEventListener('click', () => { $('#request').value = button.dataset.example; analyze(); }));
+    const saveProvider = $('#save-provider');
+    if (saveProvider) saveProvider.addEventListener('click', () => { saveProvider.textContent = 'Bu oturum için kaydedildi'; saveProvider.classList.add('saved'); });
+    const targetView = location.hash.slice(1);
+    if (targetView === 'provider' || targetView === 'runs') { const target = document.querySelector(`[data-view="${targetView}"]`); if (target) target.click(); }
+    analyze();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
