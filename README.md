@@ -1,24 +1,51 @@
-# FlowPilot — Business Process Automation Agent
+# FlowPilot — İş Süreci Otomasyon Ajanı
 
-Portfolio project 3: a polished, safe operations inbox for business workflow automation. FlowPilot accepts a natural-language work item, classifies it into a bounded playbook, collects structured inputs, previews an approval route, runs deterministic actions against sample data, and records a local handoff/audit result. This is deliberately not a financial reporting dashboard.
+FlowPilot, şirketlerdeki günlük operasyon taleplerini güvenli ve denetlenebilir iş akışlarına dönüştüren portföy projesidir. Kullanıcı doğal dille bir talep girer; uygulama talebi sınıflandırır, gerekli alanları toplar, anlaşılır bir onay planı çıkarır, örnek işletme verisi üzerinde deterministik bir işlem çalıştırır ve sonucu onay geçmişine kaydeder.
 
-## Free local mode
+Bu proje finansal raporlama uygulaması değildir. Finansal metrikler, grafikler veya rapor panoları yerine operasyon gelen kutusu, playbook seçimi, sorumlu/onay adımları, güvenlik sınırları ve iş akışı devri üzerine kuruludur.
 
-The default **Rule-based / local** provider is the complete product. It needs no API key, does not call a paid service, and works offline after Node.js is installed. Supported playbooks are purchase approval routing, customer follow-up drafting, low-stock notification preparation, and invoice intake triage. The app never sends email, places orders, creates accounting records, or changes external systems.
+## Desteklenen playbook’lar
 
-## Optional providers
+- **Satın alma onayına yönlendirme:** Tutar ve kategoriye göre onay rotası hazırlar; sipariş oluşturmaz.
+- **Müşteri takip taslağı:** Müşteri ve konu bilgisiyle taslak hazırlar; e-posta göndermez.
+- **Düşük stok uyarısı:** Örnek envanteri eşikle karşılaştırır; bildirim göndermez.
+- **Fatura/belge girişi:** Belgeyi inceleme kuyruğuna alır; muhasebe kaydı oluşturmaz.
 
-The Provider settings screen includes a user-configured OpenAI-compatible endpoint and optional local Ollama settings. They are intentionally inactive by default. No credential is embedded in this repository. If a user chooses to connect a provider, they must supply the endpoint, model, and key themselves. The current demo UI still executes the safe local path; provider integration can be added later behind the same interface.
+## Ücretsiz yerel mod
 
-## Windows setup
+Varsayılan **Kural tabanlı / yerel** mod ürünün tam çalışan sürümüdür. API anahtarı, ücretli LLM hesabı veya internet bağlantısı gerekmez. Kural tabanlı sınıflandırma ve örnek veriler üzerinde deterministik çalışır.
 
-1. Install Node.js 18 or newer.
-2. Open PowerShell in this folder.
-3. Run `npm test`.
-4. Run `npm start` and open `http://localhost:4173`.
+## İsteğe bağlı sağlayıcılar
 
-There are no runtime dependencies, so there is nothing to download or configure beyond Node.js.
+Yapay zekâ sağlayıcısı ekranında kullanıcı isterse kendi OpenAI uyumlu uç noktasını veya yerel Ollama sunucusunu tanımlayabilir. Hiçbir anahtar repoya gömülmez ve varsayılan modda hiçbir ücretli API çağrısı yapılmaz.
 
-## Screenshots and publication plan
+## Güvenlik sınırları
 
-Before publishing, run the app locally and capture the Operations inbox with a classified work item/result, the Approval history after two handoffs, and AI provider showing local mode active. Crop at a consistent 1440px desktop viewport, blur or replace any personal data, and include the three PNGs in a `screenshots/` folder. Review the README and `.gitignore`, then create a repository manually; this project has not been published to GitHub.
+FlowPilot gerçek e-posta göndermez, sipariş vermez, dış sistemleri değiştirmez ve muhasebe kaydı oluşturmaz. Etkili bir işlemden önce insan onayı gösterilir. Bu sınırlar demoda özellikle görünür tutulur.
+
+## Windows’ta çalıştırma
+
+1. Node.js 18 veya daha yeni bir sürüm kurun.
+2. PowerShell’de proje klasörünü açın.
+3. Testleri çalıştırın: `npm test`
+4. Uygulamayı başlatın: `npm start`
+5. Tarayıcıda `http://localhost:4173` adresini açın.
+
+Projenin çalışma zamanı bağımlılığı yoktur; yalnızca Node.js gerekir.
+
+## Ekran görüntüleri
+
+`screenshots/` klasöründe şu ekranlar bulunur:
+
+- Operasyon gelen kutusu ve sınıflandırılmış satın alma talebi
+- Düşük stok playbook’u için onay planı ve sonuç
+- Onay geçmişi ve yerel sağlayıcı ayarları
+
+## Proje yapısı
+
+- `index.html`: Türkçe uygulama arayüzü
+- `styles.css`: görsel tasarım ve responsive düzen
+- `app.js`: arayüz etkileşimleri ve oturum içi geçmiş
+- `automation.js`: playbook’lar, sınıflandırma ve deterministik sonuçlar
+- `tests/automation.test.js`: otomatik iş mantığı testleri
+- `server.js`: bağımlılıksız yerel web sunucusu
