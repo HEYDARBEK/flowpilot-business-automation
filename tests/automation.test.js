@@ -1,0 +1,4 @@
+const test = require('node:test'); const assert = require('node:assert/strict'); const { classify, buildResult } = require('../automation');
+test('classifies supported requests', () => { assert.equal(classify('please buy new laptops'), 'purchase'); assert.equal(classify('draft a customer follow-up'), 'followup'); assert.equal(classify('which items are low stock?'), 'stock'); assert.equal(classify('triage invoice BL-2'), 'invoice'); });
+test('purchase result never claims to place an order', () => { const r = buildResult('purchase', { amount: '1480' }); assert.equal(r.requiresApproval, true); assert.match(r.boundary, /created/); });
+test('stock workflow is deterministic', () => { const r = buildResult('stock', { threshold: '20' }); assert.equal(r.items.length, 2); assert.equal(r.items[0].sku, 'KB-104'); });

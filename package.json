@@ -1,0 +1,8 @@
+{
+  "name": "flowpilot-business-automation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FlowPilot: a safe, deterministic business process automation portfolio project.",
+  "scripts": { "start": "node server.js", "test": "node --test" },
+  "engines": { "node": ">=18" }
+}
