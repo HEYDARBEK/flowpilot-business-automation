@@ -1,5 +1,7 @@
 # FlowPilot — İş Süreci Otomasyon Ajanı
 
+> **Geliştirme aşamasında:** FlowPilot, portföy sunumu için hazırlanmış bir MVP/prototiptir. Son ürün veya üretim ortamında kullanılmaya hazır bir otomasyon sistemi değildir. Örnek verilerle çalışır; dış sistemlere işlem yapmaz.
+
 FlowPilot, şirketlerdeki günlük operasyon taleplerini güvenli ve denetlenebilir iş akışlarına dönüştüren portföy projesidir. Kullanıcı doğal dille bir talep girer; uygulama talebi sınıflandırır, gerekli alanları toplar, anlaşılır bir onay planı çıkarır, örnek işletme verisi üzerinde deterministik bir işlem çalıştırır ve sonucu onay geçmişine kaydeder.
 
 Bu proje finansal raporlama uygulaması değildir. Finansal metrikler, grafikler veya rapor panoları yerine operasyon gelen kutusu, playbook seçimi, sorumlu/onay adımları, güvenlik sınırları ve iş akışı devri üzerine kuruludur.
@@ -40,6 +42,24 @@ Projenin çalışma zamanı bağımlılığı yoktur; yalnızca Node.js gerekir.
 - Operasyon gelen kutusu ve sınıflandırılmış satın alma talebi
 - Düşük stok playbook’u için onay planı ve sonuç
 - Onay geçmişi ve yerel sağlayıcı ayarları
+
+### Operasyon gelen kutusu
+
+![Operasyon gelen kutusu](screenshots/operasyon-gelen-kutusu.png)
+
+### Onay geçmişi
+
+![Onay geçmişi](screenshots/onay-gecmisi.png)
+
+### Yapay zekâ sağlayıcısı ayarları
+
+![Yapay zekâ sağlayıcısı](screenshots/yapay-zeka-saglayicisi.png)
+
+## Ürün durumu ve sonraki geliştirmeler
+
+Bu sürüm, iş akışı otomasyonu fikrini göstermek için hazırlanmış çalışan bir prototiptir. Henüz gerçek kullanıcı hesapları, kalıcı veritabanı, rol/yetki yönetimi, gerçek e-posta veya ERP/CRM entegrasyonları, üretim izleme altyapısı ve kapsamlı güvenlik denetimleri bulunmaz.
+
+Sonraki aşamalarda playbook tasarım ekranı, kalıcı audit kayıtları, ekip bazlı onay rolleri, gerçek entegrasyonlar için izin katmanı, daha kapsamlı testler ve üretim dağıtım yapılandırması eklenebilir.
 
 ## Proje yapısı
 
