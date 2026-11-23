@@ -45,15 +45,15 @@ Projenin çalışma zamanı bağımlılığı yoktur; yalnızca Node.js gerekir.
 
 ### Operasyon gelen kutusu
 
-![Operasyon gelen kutusu](screenshots/operasyon-gelen-kutusu.png)
+![Operasyon gelen kutusu](screenshots/01-operasyon-gelen-kutusu.png)
 
 ### Onay geçmişi
 
-![Onay geçmişi](screenshots/onay-gecmisi.png)
+![Onay geçmişi](screenshots/02-onay-gecmisi.png)
 
 ### Yapay zekâ sağlayıcısı ayarları
 
-![Yapay zekâ sağlayıcısı](screenshots/yapay-zeka-saglayicisi.png)
+![Yapay zekâ sağlayıcısı](screenshots/03-yapay-zeka-saglayicisi.png)
 
 ## Ürün durumu ve sonraki geliştirmeler
 
